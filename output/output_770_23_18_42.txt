@@ -1,0 +1,5 @@
+Using SOSIA for Sparse Dataset ./datasets/base_small.csr
+l=       20
+LOADING DATA...
+Fail to open the file:
+/home/xizhao/dataset/./datasets/base_small.csr!
