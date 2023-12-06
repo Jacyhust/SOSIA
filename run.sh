@@ -19,8 +19,8 @@ else
     ./download.sh ${datasets[$id]}
 fi
 
-./sos 0 
-./sos 1
-./sos 2
-./sos 3
-./sos 4
+./sos 0 ${datasets[$id]} queries
+./sos 1 ${datasets[$id]} queries
+./sos 2 ${datasets[$id]} queries
+./sos 3 ${datasets[$id]} queries
+./sos 4 ${datasets[$id]} queries
