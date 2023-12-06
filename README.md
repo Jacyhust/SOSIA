@@ -55,9 +55,47 @@ In our project, the format of the input file (such as `base_small.csr`) is a bin
 - indices     : an array with size `nnz`. `indices` stores all the non-zero indices in the dataset by the order of points
 - data        : an array with size `nnz`. `indices` stores all the non-zero values in the dataset by the order of points
 
-FOR EXAMPLE, for the dataset $D={x_0,x_1}$ where $x_0=(0.1,0.2,0)$ and $x_1=(0.3,0,0.5)$, `nrow=2`, `ncol=3` and `nnz=4`. `indptr=[0,2,4]`, `indices=[0,1,0,2]` and `data=[0.1,0.2,0.3,0.5]`. So, the input file should be as following:
+FOR EXAMPLE, for the dataset $D=\{x_0,x_1\}$ where $x_0=(0.1,0.2,0)$ and $x_1=(0.3,0,0.5)$, `nrow=2`, `ncol=3` and `nnz=4`. `indptr=[0,2,4]`, `indices=[0,1,0,2]` and `data=[0.1,0.2,0.3,0.5]`. So, the input file should be as following:
 
 > 2(int64)3(int64)4(int64)0(int64)...0.5(float32)
+
+The input file is read via `C++` as following. You can understand the data format via this `C++` function.
+```c++
+//Load Sparse Data
+void Preprocess::load_data(const std::string& path, SparseData* sd)
+{
+	std::ifstream in(path.c_str(), std::ios::binary);
+	if (!in) {
+		std::cout << "Fail to open the file:\n" << path << "!\n";
+		exit(-10086);
+	}
+
+
+	size_t header[3] = {};
+	in.read((char*)header, sizeof(header));
+
+	size_t nrow = header[0];
+	size_t ncol = header[1];
+	size_t nnz = header[2];
+
+	sd->dim = ncol;
+	sd->n = nrow;
+	sd->nnz = nnz;
+
+	sd->indptr = new size_t[nrow + 1];
+	in.read((char*)sd->indptr, sizeof(size_t) * (nrow + 1));
+
+	sd->indices = new int[nnz];
+	in.read((char*)sd->indices, sizeof(int) * nnz);
+
+	sd->val = new float[nnz];
+	in.read((char*)sd->val, sizeof(float) * nnz);
+
+	std::cout << "Load the sparse data from the file: " << path << "\n";
+	sd->showInfo();
+	in.close();
+}
+```
 
 A sample dataset `base_small` and `queries.dev.csr` have been put in the directory `./dataset`.
 Also, you can download them from [here](https://storage.googleapis.com/ann-challenge-sparse-vectors/csr/base_small.csr.gz) and [here](https://storage.googleapis.com/ann-challenge-sparse-vectors/csr/queries.csr.gz).
