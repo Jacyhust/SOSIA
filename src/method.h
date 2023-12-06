@@ -2,8 +2,6 @@
 #include "def.h"
 #include "Preprocess.h"
 #include "basis.h"
-#include "linscan.h"
-#include "bloom.h"
 #include <cmath>
 #include <assert.h>
 #include <vector>
@@ -15,7 +13,6 @@
 #include <unordered_map>
 #include <unordered_set>
 using trans_set = std::vector<int>*;
-using namespace bloomfilter;
 
 class mips2set
 {
@@ -282,150 +279,6 @@ public:
 	}
 };
 
-class ivfAndParti
-{
-	std::vector<std::vector<std::vector<size_t>>> ivfIndex;
-public:
-	size_t n = 0;
-	int dim = 0;
-	int maxElem = -1;
-	ivfAndParti() = default;
-	SparseData* data = nullptr;
-	Partition* parti = nullptr;
-	ivfAndParti(mips2set& sets, Preprocess& prep, Partition& parti_) {
-		n = sets.n;
-		dim = sets.dim;
-		maxElem = dim * sets.l;
-		data = prep.data;
-		parti = &parti_;
-		buildIndex(sets);
-	}
-
-	void buildIndex(mips2set& sets) {
-		ivfIndex.resize(parti->num_chunk);
-		for (auto& ivf : ivfIndex)
-			ivf.resize(maxElem);
-
-		for (size_t i = 0; i < n; ++i) {
-			int dparti = parti->chunks[i];
-			for (auto& id : sets.transSets[i])
-				ivfIndex[dparti][id].emplace_back(parti->newIds[i]);
-		}
-	}
-
-	void searchPerPari(Query& q, std::vector<int>& qset, int pid){
-		int ni = parti->nums[pid];
-		std::vector<ResInt> score(ni);
-		for (int i = 0; i < ni; ++i) score[i].id = i;
-		for (auto& ind : qset) {
-			for (auto& item : ivfIndex[pid][ind]) {
-				score[item].inp++;
-			}
-		}
-
-		int ub = 2000;
-		ub = q.k + ub;
-		if (ub > n) ub = n;
-		std::partial_sort(score.begin(), score.begin() + ub, score.end());
-
-		//q.res.resize(ub);
-		std::vector<Res> res(ub);
-		for (int i = 0; i < ub; ++i) res[i] = Res(score[i].id, data->dotProduct2SV(score[i].id, q.qvec));
-		std::partial_sort(res.begin(), res.begin() + q.k, res.end());
-		res.resize(q.k);
-
-
-	}
-
-	//void knnSearch1(Query& q) {
-	//	lsh::timer timer;
-	//	std::vector<int> qset;
-	//	mips2set::getQuerySet(q, qset);
-
-	//	std::vector<ResInt> score(n);
-	//	for (int i = 0; i < n; ++i) score[i].id = i;
-
-	//	for (auto& ind : qset) {
-	//		for (auto& item : ivfIndex[ind]) {
-	//			score[item].inp++;
-	//		}
-	//	}
-	//	int ub = 2000;
-	//	ub = q.k + 200;
-	//	std::partial_sort(score.begin(), score.begin() + ub, score.end());
-	//	//for (int j = 0; j < q.queryPoint.nnz; ++j) {
-	//	//	int ind = q.queryPoint.indices[j];
-	//	//	float val = q.queryPoint.val[j];
-	//	//	for (auto& item : ivfIndex[ind]) {
-	//	//		score[item.id] += val * item.val;
-	//	//	}
-	//	//}
-	//	//q.time_total = timer.elapsed();
-
-	//	q.res.resize(ub);
-	//	for (int i = 0; i < ub; ++i) q.res[i] = Res(score[i].id, data->dotProduct2SV(score[i].id, q.qvec));
-	//	std::partial_sort(q.res.begin(), q.res.begin() + q.k, q.res.end());
-	//	q.res.resize(q.k);
-	//	q.time_total = timer.elapsed();
-	//	return;
-
-
-	//	Res* res_PQ = new Res[ub + 1];
-	//	int size = 0;
-	//	for (int i = 0; i < n; ++i) {
-	//		res_PQ[size] = Res(i, score[i].inp);
-	//		if (size < ub) {
-	//			size++;
-	//			std::push_heap(res_PQ, res_PQ + size);
-	//		}
-	//		else if (res_PQ[0].inp < res_PQ[size].inp) {
-	//			size++;
-	//			std::push_heap(res_PQ, res_PQ + size);
-	//			std::pop_heap(res_PQ, res_PQ + size);
-	//			size--;
-	//		}
-	//	}
-
-	//	//Linscan lins(data, res_PQ, size);
-	//	//lins.knnSearch(q);
-	//	//for (int i = 0; i < q.k; ++i) q.res[i].id = res_PQ[q.res[i].id].id;
-
-	//	for (int i = 0; i < size; ++i) {
-	//		res_PQ[i].inp = q.queryPoint.dotProduct2SV(data->generateSV(res_PQ[i].id));
-	//		//res_PQ[i].inp = data->dotProduct2SV(res_PQ[i].id, q.qvec);
-	//	}
-	//	Res* res1 = new Res[q.k + 1];
-	//	int size1 = 0;
-	//	for (int i = 0; i < size; ++i) {
-	//		res1[size1] = res_PQ[i];
-	//		if (size1 < q.k) {
-	//			size1++;
-	//			std::push_heap(res1, res1 + size1);
-	//		}
-	//		else if (res1[0].inp < res1[size1].inp) {
-	//			size1++;
-	//			std::push_heap(res1, res1 + size1);
-	//			std::pop_heap(res1, res1 + size1);
-	//			size1--;
-	//		}
-	//	}
-
-	//	int len = size1;
-	//	q.res.resize(len);
-	//	int rr = len - 1;
-	//	while (rr >= 0) {
-	//		q.res[rr] = res1[0];
-	//		std::pop_heap(res1, res1 + size1);
-	//		size1--;
-	//		rr--;
-	//	}
-
-	//	q.time_total = timer.elapsed();
-	//}
-};
-
-
-
 class myMinHash
 {
 	int n = 0;
@@ -588,50 +441,12 @@ public:
 			
 		}
 		q.res.resize(ub);
-		//for (int j = 0; j < q.queryPoint.nnz; ++j) {
-		//	int ind = q.queryPoint.indices[j];
-		//	float val = q.queryPoint.val[j];
-		//	for (auto& item : ivfIndex[ind]) {
-		//		score[item.id] += val * item.val;
-		//	}
-		//}
-		//q.time_total = timer.elapsed();
-
 		
 		for (int i = 0; i < ub; ++i) q.res[i] = Res(cands[i].id, data->dotProduct2SV(cands[i].id, q.qvec));
 		std::partial_sort(q.res.begin(), q.res.begin() + q.k, q.res.end());
 		q.res.resize(q.k);
 		q.time_total = timer.elapsed();
 		return; 
-
-
-
-		//int ub = 20000;
-		//Res* cands = new Res[ub];
-		//int cnt = 0;
-		//for (int j = 0; j < r; ++j) {
-		//	int key = getKeys(&(qhash[0]) + j * b);
-		//	auto pr = myIndexes[j].equal_range(key);
-		//	while (pr.first != pr.second){
-		//		if (unseen[pr.first->second]){
-		//			//res_pair.id = pr.first->second;
-		//			int id = pr.first->second;
-		//			float inp = q.queryPoint.dotProduct2SV(data->generateSV(id));
-		//			cands[cnt++] = Res(id, inp);
-		//			unseen[pr.first->second] = false;
-		//			if (cnt == ub) break;
-		//		}
-		//		++pr.first; // Increment begin iterator
-		//	}
-
-		//	if (cnt == ub) break;
-		//}
-
-		//std::sort(cands, cands + cnt);
-		//q.cost = cnt;
-		//if (q.cost <= q.k)q.res.assign(cands, cands + cnt);
-		//else q.res.assign(cands, cands + q.k);
-
 		q.time_total = timer.elapsed();
 	}
 
@@ -883,13 +698,11 @@ class myMinHashv3 :public myMinHashBase
 {
 	const std::string algName = "minHashv3";
 	int bucketSize = 0;
-	Linscan* lin = nullptr;
 	std::vector<std::vector<std::vector<int>>> myIndexes;
 	
 public:
 	myMinHashv3(Preprocess& prep, mips2set& sets, int b_, int r_) :myMinHashBase(prep, sets, b_, r_) {
 		bucketSize = len;
-		lin = new Linscan(prep.data);
 		lsh::timer timer;
 
 		std::cout << "\nMINv3 INDEXING..." << std::endl;
@@ -901,7 +714,6 @@ public:
 
 	myMinHashv3(myMinHashBase& minBase) :myMinHashBase(minBase) {
 		bucketSize = len;
-		lin = new Linscan(data);
 		lsh::timer timer;
 
 		std::cout << "\nMINv3 INDEXING..." << std::endl;

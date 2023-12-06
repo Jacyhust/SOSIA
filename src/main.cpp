@@ -13,7 +13,6 @@
 #include <thread>
 //#include <pthread.h>
 #include "Preprocess.h"
-#include "mf_alsh.h"
 #include "basis.h"
 #include "alg.h"
 #include "expe.h"
@@ -69,12 +68,9 @@ int main(int argc, char const* argv[])
 	rdCoutStream rd(getNameByDate()); //Redirect the cout to a file and output it to the console at the same time (Create at Nov 13, 2023)
 
 	std::string dataset = "base_small";
-	std::string qname= "base_queries";
+	std::string qname= "queries";
 
 	int datasetID = -1;
-	
-	//dataset = "test";
-	//qname = "test_queries";
 	
 	int L = 5;
 	int K = 12;
@@ -87,128 +83,39 @@ int main(int argc, char const* argv[])
 	float F = 2.0f;
 	int sin_m = 30, sin_h = 2;
 	int mode = 0;
-	const int num_th = thread::hardware_concurrency();
+
+	if (argc > 1) mode = std::atoi(argv[1]);
+	if (argc > 2) dataset = argv[2];
+	if (argc > 3) qname = argv[3];
 	
-	if (argc > 1) datasetID = std::stoi(argv[1]);
-
-	switch(datasetID){
-	case 0:
-		dataset = "base_1M";
-		//l = 40;
-		ub = 5000;
-		m=150;
-		l=40;
-		qname= "base_queries";
-		break;
-
-	case 1:
-		dataset = "base_full";
-		l = 40;
-		ub = 10000;
-		m=150;
-		qname= "base_queries";
-		break;
-
-	case 2:
-		dataset = "rand_1M";
-		qname= "rand";
-		ub = 5000;
-		m=150;
-		l=40;
-		break;
-
-	case 3:
-		dataset = "rand_10M";
-		qname= "rand";
-		l = 40;
-		ub = 10000;
-		m=150;
-		break;
-
-	default:
-		break;
-	}
-
-
-	// switch(datasetID){
-	// case 0:
-	// 	dataset = "base_full";
-	// 	l = 40;
-	// 	ub = 10000;
-	// 	m=150;
-	// 	qname= "base_queries";
-	// 	break;
-
-	// case 1:
-	// 	dataset = "base_1M";
-	// 	//l = 40;
-	// 	ub = 5000;
-	// 	qname= "base_queries";
-	// 	break;
-
-	// case 2:
-	// 	dataset = "tfidf";
-	// 	qname= "tfidf_queries";
-	// 	break;
-	// case 3:
-	// 	dataset = "tfidf1M";
-	// 	qname= "tfidf_queries1M";
-	// 	break;
-	// case 4:
-	// 	dataset = "tfidfm1M";
-	// 	qname= "tfidfm_queries1M";
-	// 	break;
-	// case 5:
-	// 	dataset = "uni1M";
-	// 	qname= "uni1M";
-	// 	break;
-	// case 6:
-	// 	dataset = "uni_full";
-	// 	qname= "unim_full";
-	// 	break;
-	// case 7:
-	// 	dataset = "rand_1M";
-	// 	qname= "rand";
-	// 	ub=5000;
-	// 	// dataset = "spladeR_full";
-	// 	// qname= "spladeR_full";
-	// 	break;
-	// case 8:
-	// 	dataset = "rand_10M";
-	// 	qname= "rand";
-	// 	l = 40;
-	// 	ub = 10000;
-	// 	m=150;
-	// 	break;
-	// default:
-	// 	break;
-	// }
-
-	if (argc > 2) l = std::atoi(argv[2]);
-	if (argc > 3) mode = std::atoi(argv[3]);
+	//if (argc > 4) l = std::atoi(argv[3]);
 
 	std::string argvStr[5];
-	argvStr[1] = "RawDataSet/sparse/" + dataset + ".csr";
+	argvStr[1] = "datasets/" + dataset + ".csr";
 	argvStr[2] = (dataset + ".index");
-	argvStr[3] = (dataset + "_all.ben");
-	argvStr[4] = "RawDataSet/sparse/" + qname + ".dev.csr";
+	argvStr[3] = ("datasets/"+dataset + "_all.ben");
+	argvStr[4] = "datasets/" + qname + ".dev.csr";
 
 	std::cout << "Using SOSIA for Sparse Dataset " << argvStr[1] << std::endl;
-	std::cout << "l=       " << l << std::endl;
-	Preprocess prep(data_fold1 + (argvStr[1]), data_fold1 + (argvStr[4]), data_fold2 + (argvStr[3]));
-
+	Preprocess prep((argvStr[1]), (argvStr[4]), (argvStr[3]));
 	std::vector<resOutput> res;
-
-	RecallTime(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
-	varyk(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
-	//runAll(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
-
-	// varyL(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
-	// varyM(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
-
-
-
-
+	switch(mode){
+		case 0:
+			runAll(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
+			break;
+		case 1:
+			varyL(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
+			break;
+		case 2:
+			varyM(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
+			break;
+		case 3:
+			varyk(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
+			break;	
+		case 4:
+			RecallTime(prep, c, k, m, ub, F, l, sin_m, sin_h, res);
+			break;
+	}
 
 	saveAndShow(c, k, dataset, res);
 	return 0;

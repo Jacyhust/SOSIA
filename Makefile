@@ -20,6 +20,9 @@ sos:$(SRCS)
 clean:
 	rm -rf $(TARGET)
 	rm -rf $(wildcard *.txt)
+	rm -rf ./datasets
+	rm -rf ./output
+	rm -rf ./results
 
 cleancodes:
 	rm -rf $(wildcard *.cpp) $(wildcard *.h) $(wildcard ./src/*.cpp) $(wildcard ./src/*.h)

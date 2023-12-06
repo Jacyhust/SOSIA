@@ -5,7 +5,6 @@ class Sosia :public myMinHashBase
 {
 	const std::string algName = "sosia";
 	int bucketSize = 0;
-	Linscan* lin = nullptr;
 	std::vector<std::vector<std::vector<int>>> myIndexes;
 
 	std::vector<Res> sortedNorms;
@@ -13,10 +12,9 @@ class Sosia :public myMinHashBase
 public:
 	Sosia(Preprocess& prep, mips2set& sets, int b_, int r_) :myMinHashBase(prep, sets, b_, r_) {
 		bucketSize = len;
-		lin = new Linscan(prep.data);
 		lsh::timer timer;
 
-		std::cout << "\nMINv3 INDEXING..." << std::endl;
+		std::cout << "\nSOSIA INDEXING..." << std::endl;
 		timer.restart();
 		sortNorm(sets);
 		buildIndex();
@@ -26,7 +24,6 @@ public:
 
 	Sosia(myMinHashBase& minBase) :myMinHashBase(minBase) {
 		bucketSize = len;
-		lin = new Linscan(data);
 		lsh::timer timer;
 
 		std::cout << "\nMINv3 INDEXING..." << std::endl;
