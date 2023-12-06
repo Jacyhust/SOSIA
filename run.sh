@@ -1,6 +1,6 @@
 
 # make clean
-# make
+make
 
 # echo $#
 id=2
