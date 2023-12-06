@@ -4,7 +4,7 @@
 ## Introduction
 This is a source code for the algorithm described in the paper **[Efficient Approximate Maximum Inner Product Search over Sparse Vectors (Submitted to ICDE 2024)]**. We call it as **sos** project.
 ## Compilation
-The **fg** project is written by **C++** (under `C++17` standard) and is simple and easy to use. It can be complied by **g++** in **Linux** or **MSVC** in **Windows**. To completely support `C++17` standard, the **g++** version is suggested to be **version 9** and **MSVC** version is suggested to be at least **MSVC 19.15 (Visual Studio 2017 15.8)**.
+The **sos** project is written by **C++** (under `C++17` standard) and is simple and easy to use. It can be complied by **g++** in **Linux** or **MSVC** in **Windows**. To completely support `C++17` standard, the **g++** version is suggested to be **version 9** and **MSVC** version is suggested to be at least **MSVC 19.15 (Visual Studio 2017 15.8)**.
 
 ### Installation
 #### Windows
