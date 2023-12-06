@@ -1,6 +1,6 @@
 mkdir datasets
 cd datasets
-rm *
+# rm *
 
 wget https://storage.googleapis.com/ann-challenge-sparse-vectors/csr/queries.dev.csr.gz
 
