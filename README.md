@@ -16,8 +16,6 @@ make
 ```
 The excutable file is then in the main directory, called as `sos`
 
-## Usage
-
 ### Command Usage
 
 -------------------------------------------------------------------
@@ -33,7 +31,7 @@ make
 ./sos 0 base_small queries
 ```
 
-### Parameter explanation
+#### Parameter explanation
 
 - mode         : 0-4, an integer, the running mode. mode `0` run the `sos` in the default parameters; mode `1` run the `sos` by varying the base `l`; mode `2` run the `sos` by varying the number of minHash functions `m`; mode `3` run the `sos` by varying the `k` of top-k results; mode `4` run the `sos` for obtaining the recall-time curves.
 - datasetName  : the dataset file name
@@ -97,10 +95,10 @@ void Preprocess::load_data(const std::string& path, SparseData* sd)
 }
 ```
 
-A sample dataset `base_small` and `queries.dev.csr` have been put in the directory `./dataset`.
+A sample dataset `base_small` and `queries.dev.csr` have been put in the directory `./datasets`.
 Also, you can download them from [here](https://storage.googleapis.com/ann-challenge-sparse-vectors/csr/base_small.csr.gz) and [here](https://storage.googleapis.com/ann-challenge-sparse-vectors/csr/queries.csr.gz).
 
-For your application, you should also transform your dataset and queries into this binary format, then rename them as `[datasetName].csr` and `[queries].dev.csr`. Then, put them in the directory `./dataset`.
+For your application, you should also transform your dataset and queries into this binary format, then rename them as `[datasetName].csr` and `[queries].dev.csr`. Then, put them in the directory `./datasetss`.
 
 ### Download the datasets
 There are 3 datasets that can be downloaded from the internet, which are `base_small`, `base_1M` and `base_full`. `base_1M` and `base_full` are used in the experiments in our paper (`SPLADE1M` and `SPLADE-Full`). To download them, we can follow the guidance below (Take `base_1M` as example):
@@ -125,8 +123,8 @@ cd .
 ./run.sh datasetID
 ```
 `datasetID` can be `0`, `1` or `2`, which represents the datasets `base_small`, `base_1M` and `base_full`, respectively.
-## Result
+## Results
 The experimental result is saved in the directory `./results/` as the file `Running_result.txt`.
 
 ## Reference
-**[Efficient Approximate Maximum Inner Product Search over Sparse Vectors (Submitted to ICDE 2024)]**
+[Efficient Approximate Maximum Inner Product Search over Sparse Vectors (Submitted to ICDE 2024)](https://github.com/Jacyhust/SOSIA/tree/main/Report)
