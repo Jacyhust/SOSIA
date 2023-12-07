@@ -116,7 +116,7 @@ gunzip *.gz
 cd ..
 ```
 
-## Reproduction
+## Reproduction in Linux
 To quickly reproduce the results in our paper, a one-click shell `run.sh` is prepared. We can run it as following:
 ```bash
 cd .
