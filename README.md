@@ -23,7 +23,7 @@ The excutable file is then in the main directory, called as `sos`
 -------------------------------------------------------------------
 (the first parameter specifies the procedure be executed and change)
 
-FOR EXAMPLE, YOU CAN RUN THE FOLLOWING CODE IN COMMAND LINE AFTER BUILD ALL THE TOOLS:
+FOR EXAMPLE, YOU CAN RUN THE FOLLOWING CODE IN COMMAND LINE AFTER BUILDING ALL THE TOOLS:
 
 ```bash
 cd .
