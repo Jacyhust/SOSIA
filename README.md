@@ -33,7 +33,7 @@ make
 
 #### Parameter explanation
 
-- mode         : 0-4, an integer, the running mode. mode `0` run the `sos` in the default parameters; mode `1` run the `sos` by varying the base `l`; mode `2` run the `sos` by varying the number of minHash functions `m`; mode `3` run the `sos` by varying the `k` of top-k results; mode `4` run the `sos` for obtaining the recall-time curves.
+- mode         : 0-4, an integer, the running mode. mode `0` runs the `sos` in the default parameters; mode `1` runs the `sos` by varying the base `l`; mode `2` runs the `sos` by varying the number of minHash functions `m`; mode `3` runs the `sos` by varying the `k` of top-k results; mode `4` runs the `sos` for obtaining the recall-time curves.
 - datasetName  : the dataset file name
 - queries      : the query file name
 -------------------------------------------------------------------
