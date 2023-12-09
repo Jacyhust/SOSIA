@@ -26,9 +26,3 @@ clean:
 
 cleancodes:
 	rm -rf $(wildcard *.cpp) $(wildcard *.h) $(wildcard ./src/*.cpp) $(wildcard ./src/*.h)
-
-getcode:
-	7za x wLSH.7z -r -o./
-
-cleanother:
-	rm -rf $(wildcard *.txt)
