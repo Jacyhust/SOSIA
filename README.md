@@ -1,5 +1,5 @@
 
-# The Source Code for SOSIA (Submitted to ICDE 2024)
+# The Source Code for SOSIA (ICDE 2024)
 -----------------------------------------------------------------------------------------------------------------
 ## Introduction
 This is a source code for the algorithm described in the paper **[Efficient Approximate Maximum Inner Product Search over Sparse Vectors (Submitted to ICDE 2024)]**. We call it as **sos** project.
